@@ -1,4 +1,4 @@
-import { LangEnum, LocaleList, type localeType } from './type';
+import { LangEnum, LocaleList, type localeType } from './constants';
 
 /**
  * 文案解析器接受的宽松结构。插件 SDK 仍可能返回缺少 zh-CN 的旧版文案，解析时统一回退英文；

@@ -1,4 +1,8 @@
 import z from 'zod';
+import { LocaleList } from './constants';
+
+// 语言常量已迁移到 ./constants（避免启动路径引入 zod）；这里保留 re-export 兼容旧导入。
+export { LangEnum, LocaleList, langMap, type localeType } from './constants';
 
 export const I18nStringSchema = z.object({
   en: z.string(),
@@ -8,36 +12,7 @@ export const I18nStringSchema = z.object({
 });
 export type I18nStringType = z.infer<typeof I18nStringSchema>;
 
-export enum LangEnum {
-  'zh_CN' = 'zh-CN',
-  'zh_Hant' = 'zh-Hant',
-  'en' = 'en',
-  'ko_KR' = 'ko-KR'
-}
-
-export type localeType = `${LangEnum}`;
-export const LocaleList = ['en', 'zh-CN', 'zh-Hant', 'ko-KR'] as const;
-
 export const LanguageSchema = z.enum(LocaleList).meta({ description: '用户语言偏好' });
-
-export const langMap = {
-  [LangEnum.en]: {
-    label: 'English(US)',
-    avatar: 'common/language/America'
-  },
-  [LangEnum.zh_CN]: {
-    label: '简体中文',
-    avatar: 'common/language/China'
-  },
-  [LangEnum.zh_Hant]: {
-    label: '繁体中文',
-    avatar: 'common/language/China'
-  },
-  [LangEnum.ko_KR]: {
-    label: '한국어 (대한민국)',
-    avatar: 'common/language/SouthKorea'
-  }
-};
 
 export const I18nUnionStringSchema = z.union([I18nStringSchema, z.string()]);
 export type I18nUnionStringType = z.infer<typeof I18nUnionStringSchema>;

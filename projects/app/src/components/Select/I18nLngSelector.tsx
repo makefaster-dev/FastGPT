@@ -4,8 +4,8 @@ import { useI18nLng } from '@fastgpt/web/hooks/useI18n';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo } from 'react';
 import MyIcon from '@fastgpt/web/components/common/Icon';
-import type { LangEnum } from '@fastgpt/global/common/i18n/type';
-import { langMap } from '@fastgpt/global/common/i18n/type';
+import type { LangEnum } from '@fastgpt/global/common/i18n/constants';
+import { langMap } from '@fastgpt/global/common/i18n/constants';
 import { useUserStore } from '@/web/support/user/useUserStore';
 
 const I18nLngSelector = () => {

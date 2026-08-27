@@ -1,4 +1,4 @@
-import { LangEnum, type localeType } from '@fastgpt/global/common/i18n/type';
+import { LangEnum, type localeType } from '@fastgpt/global/common/i18n/constants';
 import { parseLocale } from '@fastgpt/global/common/i18n/utils';
 import {
   FASTGPT_LANGUAGE_HEADER,

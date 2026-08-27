@@ -15,7 +15,7 @@ import {
   setUtmParams,
   setUtmWorkflow
 } from '../support/marketing/utils';
-import { type ShortUrlParams } from '@fastgpt/global/support/marketing/type';
+import type { ShortUrlParams } from '@fastgpt/global/support/marketing/type';
 import { setCouponCode } from '@/web/support/marketing/utils';
 import { appClientEnv } from '@/web/common/system/env';
 
