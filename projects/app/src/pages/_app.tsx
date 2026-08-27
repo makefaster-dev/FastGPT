@@ -5,7 +5,6 @@ import { clientI18nConfig } from '@fastgpt/web/i18n/clientConfig';
 import { getLangFromCookie, LANG_KEY } from '@fastgpt/web/i18n/utils';
 import AppShell from '@/web/context/AppShell';
 import '@/web/styles/reset.scss';
-import '@scalar/api-reference-react/style.css';
 
 const clientOnlyRoutes = new Set([
   '/account/apikey',
