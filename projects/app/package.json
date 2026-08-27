@@ -12,10 +12,10 @@
   "scripts": {
     "dev": "pnpm run build:workers && next dev",
     "dev:pro": "pnpm run dev",
-    "build": "pnpm run build:workers && next build --debug",
-    "build:webpack": "pnpm run build:workers && next build --webpack --debug",
+    "build": "pnpm run build:workers && next build --debug && node scripts/precompress-static.mjs",
+    "build:webpack": "pnpm run build:workers && next build --webpack --debug && node scripts/precompress-static.mjs",
     "analyze": "next experimental-analyze",
-    "start": "next start",
+    "start": "node server.mjs",
     "migrate:auth-code": "tsx scripts/migration/authCodeToTmpData.ts",
     "test": "vitest run -c vitest.config.ts",
     "test:watch": "vitest -c vitest.config.ts",
