@@ -74,6 +74,10 @@ const Login = () => {
 };
 
 export async function getServerSideProps(context: any) {
+  // 登录页是匿名入口，SSR 内容只依赖语言 Cookie；给浏览器一个短的私有缓存窗口，
+  // 让重复访问跳过重新下载文档（默认 no-store 会强制每次全量拉取 HTML）。
+  context.res.setHeader('Cache-Control', 'private, max-age=60, must-revalidate');
+
   return {
     props: {
       ...(await serviceSideProps(context, ['app', 'user', 'login']))
