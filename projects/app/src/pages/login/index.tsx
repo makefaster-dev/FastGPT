@@ -4,6 +4,7 @@ import { serviceSideProps } from '@/web/common/i18n/utils';
 import { clearToken } from '@/web/support/user/auth';
 import { useMount } from 'ahooks';
 import LoginModal from '@/pageComponents/login/LoginModal';
+import { SsrFeConfigContext } from '@/pageComponents/login/SsrFeConfigContext';
 import { postAcceptInvitationLink } from '@/web/support/user/team/api';
 import { useToast } from '@fastgpt/web/hooks/useToast';
 import { useTranslation } from 'next-i18next';
@@ -13,7 +14,11 @@ import { validateRedirectUrl } from '@/web/common/utils/uri';
 import type { LoginSuccessResponseType } from '@fastgpt/global/openapi/support/user/account/login/api';
 import { useLoginRedirectAfterLogin } from '@/web/support/user/loginRedirect';
 
-const Login = () => {
+const Login = ({
+  ssrFeConfigs
+}: {
+  ssrFeConfigs?: { docUrl?: string | null; systemTitle?: string | null };
+}) => {
   const router = useRouter();
   const { lastRoute = '', lastTmbId = '' } = router.query as {
     lastRoute: string;
@@ -70,7 +75,11 @@ const Login = () => {
     router.prefetch('/dashboard/agent');
   });
 
-  return <LoginModal onSuccess={loginSuccess} />;
+  return (
+    <SsrFeConfigContext.Provider value={ssrFeConfigs ?? {}}>
+      <LoginModal onSuccess={loginSuccess} />
+    </SsrFeConfigContext.Provider>
+  );
 };
 
 export async function getServerSideProps(context: any) {
@@ -80,6 +89,12 @@ export async function getServerSideProps(context: any) {
 
   return {
     props: {
+      // 首帧需要的系统配置直接内联进文档：协议提示是最大内容绘制候选，
+      // 不能等客户端 getInitData 返回后才出现。
+      ssrFeConfigs: {
+        docUrl: global.feConfigs?.docUrl ?? null,
+        systemTitle: global.feConfigs?.systemTitle ?? null
+      },
       ...(await serviceSideProps(context, ['app', 'user', 'login']))
     }
   };

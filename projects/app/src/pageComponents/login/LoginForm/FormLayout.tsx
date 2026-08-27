@@ -5,13 +5,13 @@ import { LOGO_ICON } from '@fastgpt/global/common/system/constants';
 import { OAuthEnum } from '@fastgpt/global/support/user/constant';
 import { createAuthorizationUrl } from '@fastgpt/global/support/user/account/verification/authorization';
 import { useRouter } from 'next/router';
-import { type Dispatch, useCallback, useEffect, useMemo, useState } from 'react';
+import { type Dispatch, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { SsrFeConfigContext } from '@/pageComponents/login/SsrFeConfigContext';
 import { useTranslation } from 'next-i18next';
 import MyImage from '@fastgpt/web/components/common/Image/MyImage';
 import { checkIsWecomTerminal } from '@fastgpt/global/support/user/login/constants';
 import { getNanoid } from '@fastgpt/global/common/string/tools';
 import Avatar from '@fastgpt/web/components/common/Avatar';
-import dynamic from 'next/dynamic';
 import { POST } from '@/web/common/api/request';
 import MyTooltip from '@fastgpt/web/components/common/MyTooltip';
 import type {
@@ -39,6 +39,9 @@ const FormLayout = ({ children, setPageType, pageType }: Props) => {
   const rootLogin = router.query.rootLogin === '1';
 
   const { setLoginStore, feConfigs } = useSystemStore();
+  // SSR 首帧 feConfigs 尚未拉取，品牌标题回退到文档内联的配置
+  const ssrFeConfigs = useContext(SsrFeConfigContext);
+  const systemTitle = feConfigs?.systemTitle || ssrFeConfigs.systemTitle || '';
 
   const { lastRoute = '/dashboard/agent', lastTmbId = '' } = router.query as {
     lastRoute: string;
@@ -49,9 +52,11 @@ const FormLayout = ({ children, setPageType, pageType }: Props) => {
   }, [lastRoute, router.pathname, router.asPath]);
 
   const [oauthState] = useState(() => getNanoid(8));
-  const redirectUri = `${location.origin}/login/provider`;
+  // SSR 阶段没有 location/navigator：给出空回退，OAuth 跳转链接只在浏览器点击时使用
+  const isBrowser = typeof window !== 'undefined';
+  const redirectUri = isBrowser ? `${location.origin}/login/provider` : '';
 
-  const isWecomWorkTerminal = checkIsWecomTerminal();
+  const isWecomWorkTerminal = isBrowser ? checkIsWecomTerminal() : false;
   const canWecomTerminalAutoRedirect =
     !isWecomWorkTerminal || feConfigs?.wecomLoginAutoRedirect === true;
 
@@ -255,7 +260,7 @@ const FormLayout = ({ children, setPageType, pageType }: Props) => {
             <MyImage src={LOGO_ICON} w={['22.5px', '36px']} alt={'icon'} />
           </Flex>
           <Box ml={[3, 5]} fontSize={['lg', 'xl']} fontWeight={'bold'} color={'myGray.900'}>
-            {feConfigs?.systemTitle}
+            {systemTitle}
           </Box>
         </Flex>
       </Flex>
@@ -314,6 +319,6 @@ const FormLayout = ({ children, setPageType, pageType }: Props) => {
   );
 };
 
-export default dynamic(() => Promise.resolve(FormLayout), {
-  ssr: false
-});
+// 注意：登录表单是入口页的最大内容绘制来源，必须参与 SSR 首帧；
+// 浏览器专用 API（location/navigator）已在组件内做了 SSR 安全回退，不要再用 ssr:false 包裹。
+export default FormLayout;
