@@ -113,7 +113,14 @@ export const useInitApp = () => {
       );
     }
 
-    loadGitStar();
+    // 首屏不消费 star 数（默认值兜底展示）；空闲后再请求外部 API，避免启动阶段
+    // 新建跨域连接与首屏资源抢带宽。
+    const idleLoadGitStar = () => void loadGitStar();
+    if (typeof window.requestIdleCallback === 'function') {
+      window.requestIdleCallback(idleLoadGitStar, { timeout: 10000 });
+    } else {
+      window.setTimeout(idleLoadGitStar, 3000);
+    }
 
     setScripts(scripts || []);
     setInitd();
