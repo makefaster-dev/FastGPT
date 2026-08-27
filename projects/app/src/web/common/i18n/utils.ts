@@ -21,12 +21,9 @@ export const serviceSideProps = async (
       content.locale ||
       ''
   );
-  // SSR 只额外预加载中文资源；英文、韩文等语言由客户端按需加载，避免首屏携带全部语言包。
-  const extraLng = content.locales?.filter(
-    (locale: string) => locale !== lang && locale.toLowerCase().startsWith('zh')
-  );
-
+  // SSR 只序列化当前语言的文案：额外预加载其他语言会让每个文档多携带上百 KB，
+  // 语言切换时由客户端 i18n 动态 backend（partialBundledLanguages）按需加载。
   const namespaces = Array.from(new Set<I18nNsType[number]>(['common', 'price', ...ns]));
 
-  return serverSideTranslations(lang, namespaces, undefined, extraLng);
+  return serverSideTranslations(lang, namespaces);
 };

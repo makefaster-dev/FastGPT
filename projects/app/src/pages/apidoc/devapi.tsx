@@ -1,3 +1,4 @@
+import '@scalar/api-reference-react/style.css';
 import { ScalarOpenApiPage } from '@/pageComponents/apidoc/ScalarOpenApiPage';
 import { serviceSideProps } from '@/web/common/i18n/utils';
 import { DevApiTagNameAliases, DevApiTagsMap } from '@fastgpt/global/openapi/tag';

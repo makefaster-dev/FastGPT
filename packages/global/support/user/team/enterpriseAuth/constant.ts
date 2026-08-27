@@ -1,20 +1,25 @@
-import z from 'zod';
-
+/**
+ * 企业认证相关常量。保持零 zod 依赖：错误码表（common/error/code/team.ts）在客户端启动
+ * 路径上引用本文件，若这里引入 zod 会把整个 zod 运行时带进每个页面的首屏 bundle。
+ * 对应的 zod schema 定义在 ./schema.ts。
+ */
 export const EnterpriseAuthMaxTimes = 3;
 export const EnterpriseAuthTrialDays = 15;
 export const EnterpriseAuthTaskExpireHours = 24;
 export const EnterpriseAuthAmountMaxErrorTimes = 3;
 
-export const TeamEnterpriseAuthStatusSchema = z.enum([
+export const TeamEnterpriseAuthStatusValues = [
   'unverified',
   'verifying',
   'verified',
   'failed'
-]);
-export const TeamEnterpriseAuthStatusEnum = TeamEnterpriseAuthStatusSchema.enum;
-export type TeamEnterpriseAuthStatusEnum = z.infer<typeof TeamEnterpriseAuthStatusSchema>;
+] as const;
+export type TeamEnterpriseAuthStatusEnum = (typeof TeamEnterpriseAuthStatusValues)[number];
+export const TeamEnterpriseAuthStatusEnum = Object.fromEntries(
+  TeamEnterpriseAuthStatusValues.map((v) => [v, v])
+) as { [K in TeamEnterpriseAuthStatusEnum]: K };
 
-export const TeamEnterpriseAuthTaskStatusSchema = z.enum([
+export const TeamEnterpriseAuthTaskStatusValues = [
   'starting',
   'info_failed',
   'pending_amount',
@@ -29,9 +34,11 @@ export const TeamEnterpriseAuthTaskStatusSchema = z.enum([
   'failed',
   'verified',
   'service_failed'
-]);
-export const TeamEnterpriseAuthTaskStatusEnum = TeamEnterpriseAuthTaskStatusSchema.enum;
-export type TeamEnterpriseAuthTaskStatusEnum = z.infer<typeof TeamEnterpriseAuthTaskStatusSchema>;
+] as const;
+export type TeamEnterpriseAuthTaskStatusEnum = (typeof TeamEnterpriseAuthTaskStatusValues)[number];
+export const TeamEnterpriseAuthTaskStatusEnum = Object.fromEntries(
+  TeamEnterpriseAuthTaskStatusValues.map((v) => [v, v])
+) as { [K in TeamEnterpriseAuthTaskStatusEnum]: K };
 
 export const EnterpriseAuthPendingTaskStatuses = [
   TeamEnterpriseAuthTaskStatusEnum.starting,
@@ -46,7 +53,7 @@ export const EnterpriseAuthLockedTaskStatuses = [
   TeamEnterpriseAuthTaskStatusEnum.verified
 ] as const;
 
-const EnterpriseAuthErrValueSchema = z.enum([
+export const EnterpriseAuthErrValues = [
   'enterpriseAuthDisabled',
   'enterpriseAuthServiceNotConfigured',
   'enterpriseAuthNoRemainingTimes',
@@ -61,22 +68,22 @@ const EnterpriseAuthErrValueSchema = z.enum([
   'enterpriseAuthAmountError',
   'enterpriseAuthAmountFailed',
   'enterpriseAuthProcessing'
-]);
+] as const;
+export type EnterpriseAuthErrEnum = (typeof EnterpriseAuthErrValues)[number];
+
 export const EnterpriseAuthErrEnum = {
-  disabled: EnterpriseAuthErrValueSchema.enum.enterpriseAuthDisabled,
-  serviceNotConfigured: EnterpriseAuthErrValueSchema.enum.enterpriseAuthServiceNotConfigured,
-  noRemainingTimes: EnterpriseAuthErrValueSchema.enum.enterpriseAuthNoRemainingTimes,
-  alreadyVerified: EnterpriseAuthErrValueSchema.enum.enterpriseAuthAlreadyVerified,
-  enterpriseOccupied: EnterpriseAuthErrValueSchema.enum.enterpriseAuthEnterpriseOccupied,
-  tooFrequent: EnterpriseAuthErrValueSchema.enum.enterpriseAuthTooFrequent,
-  serviceError: EnterpriseAuthErrValueSchema.enum.enterpriseAuthServiceError,
-  serviceTimeout: EnterpriseAuthErrValueSchema.enum.enterpriseAuthServiceTimeout,
-  infoFailed: EnterpriseAuthErrValueSchema.enum.enterpriseAuthInfoFailed,
-  taskNotFound: EnterpriseAuthErrValueSchema.enum.enterpriseAuthTaskNotFound,
-  taskExpired: EnterpriseAuthErrValueSchema.enum.enterpriseAuthTaskExpired,
-  amountError: EnterpriseAuthErrValueSchema.enum.enterpriseAuthAmountError,
-  amountFailed: EnterpriseAuthErrValueSchema.enum.enterpriseAuthAmountFailed,
-  processing: EnterpriseAuthErrValueSchema.enum.enterpriseAuthProcessing
-} as const;
-export const EnterpriseAuthErrSchema = z.enum(EnterpriseAuthErrEnum);
-export type EnterpriseAuthErrEnum = z.infer<typeof EnterpriseAuthErrSchema>;
+  disabled: 'enterpriseAuthDisabled',
+  serviceNotConfigured: 'enterpriseAuthServiceNotConfigured',
+  noRemainingTimes: 'enterpriseAuthNoRemainingTimes',
+  alreadyVerified: 'enterpriseAuthAlreadyVerified',
+  enterpriseOccupied: 'enterpriseAuthEnterpriseOccupied',
+  tooFrequent: 'enterpriseAuthTooFrequent',
+  serviceError: 'enterpriseAuthServiceError',
+  serviceTimeout: 'enterpriseAuthServiceTimeout',
+  infoFailed: 'enterpriseAuthInfoFailed',
+  taskNotFound: 'enterpriseAuthTaskNotFound',
+  taskExpired: 'enterpriseAuthTaskExpired',
+  amountError: 'enterpriseAuthAmountError',
+  amountFailed: 'enterpriseAuthAmountFailed',
+  processing: 'enterpriseAuthProcessing'
+} as const satisfies Record<string, EnterpriseAuthErrEnum>;

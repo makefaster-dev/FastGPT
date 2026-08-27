@@ -1,9 +1,9 @@
 import z from 'zod';
+import { EnterpriseAuthAmountMaxErrorTimes } from '../../../../../support/user/team/enterpriseAuth/constant';
 import {
-  EnterpriseAuthAmountMaxErrorTimes,
   TeamEnterpriseAuthStatusSchema,
   TeamEnterpriseAuthTaskStatusSchema
-} from '../../../../../support/user/team/enterpriseAuth/constant';
+} from '../../../../../support/user/team/enterpriseAuth/schema';
 import {
   isBankAccount,
   isUnifiedCreditCode,

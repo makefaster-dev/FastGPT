@@ -50,3 +50,7 @@ pro/admin/worker/
 /pro/llm_benchmark/content_benchmark/eval-runs/
 /pro/llm_benchmark/content_benchmark/.cache/
 .gstack/
+
+# makefaster precompressed static siblings
+projects/app/public/**/*.br
+projects/app/public/**/*.gz

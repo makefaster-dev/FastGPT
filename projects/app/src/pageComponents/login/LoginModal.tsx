@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Flex } from '@chakra-ui/react';
 import { LoginContainer } from '@/pageComponents/login';
+import { loginGradientBgDataUri } from '@/pageComponents/login/loginGradientBg';
 import I18nLngSelector from '@/components/Select/I18nLngSelector';
 import { useSystem } from '@fastgpt/web/hooks/useSystem';
 import { type LoginSuccessResponseType } from '@fastgpt/global/openapi/support/user/account/login/api';
@@ -50,7 +51,7 @@ const LoginModal = ({ onSuccess }: LoginModalProps) => {
           h={['590px', '510px']}
           transform={'translateX(-50%)'}
           pointerEvents={'none'}
-          bgImage={'url(/icon/login-gradient-bg.svg)'}
+          bgImage={`url(${loginGradientBgDataUri})`}
           bgRepeat={'no-repeat'}
           bgPosition={'center top'}
           bgSize={'100% 100%'}

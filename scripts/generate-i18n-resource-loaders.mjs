@@ -5,11 +5,11 @@ import { fileURLToPath } from 'node:url';
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const i18nDir = path.join(repositoryRoot, 'packages/web/i18n');
 const localeTypeSource = fs.readFileSync(
-  path.join(repositoryRoot, 'packages/global/common/i18n/type.ts'),
+  path.join(repositoryRoot, 'packages/global/common/i18n/constants.ts'),
   'utf8'
 );
 const localeListSource = localeTypeSource.match(/LocaleList\s*=\s*\[([\s\S]*?)\]\s*as const/)?.[1];
-if (!localeListSource) throw new Error('Unable to read LocaleList from i18n type.ts');
+if (!localeListSource) throw new Error('Unable to read LocaleList from i18n constants.ts');
 const languages = Array.from(localeListSource.matchAll(/'([^']+)'/g), (match) => match[1]);
 const constants = fs.readFileSync(path.join(i18nDir, 'constants.ts'), 'utf8');
 const namespaceListSource = constants.match(/I18N_NAMESPACES\s*=\s*\[([\s\S]*?)\]/)?.[1];

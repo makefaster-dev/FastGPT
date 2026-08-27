@@ -1,6 +1,6 @@
 import dynamicImportBackend from './dynamicImportBackend';
 import type { UserConfig } from 'next-i18next';
-import { LocaleList } from '@fastgpt/global/common/i18n/type';
+import { LocaleList } from '@fastgpt/global/common/i18n/constants';
 
 export const clientI18nConfig: UserConfig = {
   i18n: {

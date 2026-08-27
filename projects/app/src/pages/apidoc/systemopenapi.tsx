@@ -1,3 +1,4 @@
+import '@scalar/api-reference-react/style.css';
 import { ScalarOpenApiPage } from '@/pageComponents/apidoc/ScalarOpenApiPage';
 
 function SystemOpenApiDocPage() {

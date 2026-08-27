@@ -1,10 +1,43 @@
-import {
-  FastGPT_SEM_Schema,
-  type ShortUrlParams,
-  type TrackRegisterParams
-} from '@fastgpt/global/support/marketing/type';
+import type { ShortUrlParams, TrackRegisterParams } from '@fastgpt/global/support/marketing/type';
 
 const fastgptSemSourceDomainInitedKey = 'fastgpt_sem_sourceDomain_inited';
+
+type FastGPTSemLocalType = NonNullable<TrackRegisterParams['fastgpt_sem']>;
+
+const FASTGPT_SEM_STRING_KEYS = [
+  'shortUrlSource',
+  'shortUrlMedium',
+  'shortUrlContent',
+  'keyword',
+  'search',
+  'sourceDomain',
+  'visitor_id'
+] as const;
+
+/**
+ * 本地 fastgpt_sem 数据的轻量校验（等价于 FastGPT_SEM_Schema 的客户端子集）。
+ * 刻意不用 zod：本文件在每个页面的启动路径上，引入 zod 会把整个运行时带进首屏 bundle；
+ * 服务端上报仍由 zod schema 严格校验。校验失败返回 undefined，与 safeParse 失败分支一致。
+ */
+const sanitizeFastGPTSem = (value: unknown): FastGPTSemLocalType | undefined => {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return undefined;
+
+  const input = value as Record<string, unknown>;
+  const result: Record<string, string> = {};
+  for (const key of FASTGPT_SEM_STRING_KEYS) {
+    const item = input[key];
+    if (item === undefined) continue;
+    if (typeof item !== 'string') return undefined;
+    if (key === 'visitor_id') {
+      const trimmed = item.trim();
+      if (trimmed.length < 1 || trimmed.length > 64) return undefined;
+      result[key] = trimmed;
+    } else {
+      result[key] = item;
+    }
+  }
+  return result;
+};
 
 export const getBdVId = () => {
   return sessionStorage.getItem('bd_vid') || undefined;
@@ -54,8 +87,8 @@ export const getFastGPTSem = (): TrackRegisterParams['fastgpt_sem'] => {
     const value = localStorage.getItem('fastgpt_sem');
     if (!value) return undefined;
 
-    const result = FastGPT_SEM_Schema.safeParse(JSON.parse(value));
-    if (result.success) return result.data;
+    const result = sanitizeFastGPTSem(JSON.parse(value));
+    if (result) return result;
 
     localStorage.removeItem('fastgpt_sem');
     return undefined;
@@ -81,13 +114,13 @@ export const setFastGPTSem = (fastgptSem?: TrackRegisterParams['fastgpt_sem']) =
 
   const currentFastGPTSem = getFastGPTSem();
   const nextFastGPTSem = Object.fromEntries(validEntries);
-  const result = FastGPT_SEM_Schema.safeParse({
+  const result = sanitizeFastGPTSem({
     ...currentFastGPTSem,
     ...nextFastGPTSem
   });
 
-  if (!result.success) return;
-  localStorage.setItem('fastgpt_sem', JSON.stringify(result.data));
+  if (!result) return;
+  localStorage.setItem('fastgpt_sem', JSON.stringify(result));
 };
 export const removeFastGPTSem = () => {
   localStorage.removeItem('fastgpt_sem');

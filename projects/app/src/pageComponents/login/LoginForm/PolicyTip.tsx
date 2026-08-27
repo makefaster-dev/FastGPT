@@ -1,12 +1,16 @@
 import { getDocPath } from '@/web/common/system/doc';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
+import { SsrFeConfigContext } from '@/pageComponents/login/SsrFeConfigContext';
 import { Box, Link } from '@chakra-ui/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Trans, useTranslation } from 'next-i18next';
 import { i18nT } from '@fastgpt/global/common/i18n/utils';
 
 const PolicyTip = () => {
   const { feConfigs } = useSystemStore();
+  // SSR 首帧 feConfigs 尚未拉取，回退到文档内联的配置，保证协议提示随服务端 HTML 绘制
+  const ssrFeConfigs = useContext(SsrFeConfigContext);
+  const docUrl = feConfigs?.docUrl || ssrFeConfigs.docUrl || undefined;
   const { i18n } = useTranslation();
   const tipRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLSpanElement>(null);
@@ -34,11 +38,11 @@ const PolicyTip = () => {
       clearTimeout(timer);
       observer.disconnect();
     };
-  }, [i18n.language, feConfigs?.docUrl]);
+  }, [i18n.language, docUrl]);
 
   return (
     <>
-      {feConfigs?.docUrl && (
+      {docUrl && (
         <Box
           ref={tipRef}
           display={'block'}
@@ -56,14 +60,14 @@ const PolicyTip = () => {
               lineBreak: isMultiline ? <br /> : <span />,
               termsLink: (
                 <Link
-                  href={getDocPath('/guide/version/cloud/terms')}
+                  href={getDocPath('/guide/version/cloud/terms', docUrl)}
                   target={'_blank'}
                   color={'primary.700'}
                 />
               ),
               privacyLink: (
                 <Link
-                  href={getDocPath('/guide/version/cloud/privacy')}
+                  href={getDocPath('/guide/version/cloud/privacy', docUrl)}
                   target={'_blank'}
                   color={'primary.700'}
                 />
